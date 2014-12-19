@@ -2,21 +2,19 @@
 module Decorator
 	
 	def self.for(model, view_context)
-		view = view_context
+
 		decorator_name = model.class.name + "Decorator"
 		decorator = const_get(decorator_name)
 		
 		decorator.module_eval do 
-			
-			def helpers
-					
+
+			define_method(:helpers) { view_context }
+
+			define_method(:undecorate) do 
+			 	model.dup
 			end
 
-			def undecorated(method_call)
-				#forward to super
-				super.send(:method_call)
-			end
-
+			alias model undecorate
 		end
 
 		decorator
