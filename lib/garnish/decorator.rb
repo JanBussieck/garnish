@@ -1,23 +1,27 @@
 
 module Decorator
-	
-	def self.for(model, view_context)
 
-		decorator_name = model.class.name + "Decorator"
-		decorator = const_get(decorator_name)
-		
-		decorator.module_eval do 
+    def self.for(model, view_context)
 
-			define_method(:helpers) { view_context }
+        decorator_name = model.class.name + "Decorator"
+        decorator = const_get(decorator_name)
 
-			define_method(:undecorate) do 
-			 	model.dup
-			end
+        decorator.module_eval do
 
-			alias model undecorate
-		end
+            # dynamically define methods for associations in model and decorate them
+            # lazily when mapping over them
 
-		decorator
-	end
+            define_method(:helpers) { view_context }
+
+            define_method(:undecorate) do
+                model.dup
+            end
+
+            #override iteration methods
+            alias model undecorate
+        end
+
+        decorator
+    end
 
 end
